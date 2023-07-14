@@ -1,7 +1,10 @@
-import React, {useState} from "react"
+import React, { useState, createContext } from "react"
 import Todos from './component/Todos';
+import TodoForm from "./component/TodoForm";
 
-export default function App () {
+export const TodoContext = createContext()
+
+export default function App() {
   const [todos, setTodos] = useState([
     {
       id: 1,
@@ -20,13 +23,42 @@ export default function App () {
     },
   ])
 
-  console.log(todos)
+  const toggleCompleted = (todoId) => {
+    const updatedTodos = todos.map((todo) => {
+      if (todo.id === todoId) {
+        todo.completed = !todo.completed
+      }
+      return todo
+    })
+    setTodos(updatedTodos)
+  }
+  const deleteTodo = (todoId) => {
+    const updatedTodos = todos.filter(todo => todo.id != todoId)
+    setTodos(updatedTodos)
+  }
+  const addTodo = (todoTitle) => {
+    if (todoTitle == '') {
+      return
+    }
+
+    const newTodo = {
+      id: todos.length + 1,
+      title: todoTitle,
+      completed: false,
+    }
+
+    const updatedTodos = todos.concat(newTodo)
+    setTodos(updatedTodos)
+  }
 
   return (
-    <div>
-      <h1 style={styles.container}>My Todo List</h1>
-      <Todos style={styles.title} todos={todos}/>
-    </div>
+    <TodoContext.Provider value={{ toggleCompleted, deleteTodo }}>
+      <div style={styles.container}>
+        <h1 style={styles.title}>My Todo List</h1>
+        <TodoForm addTodo={addTodo} />
+        <Todos style={styles.title} todos={todos} />
+      </div>
+    </TodoContext.Provider>
   )
 }
 
