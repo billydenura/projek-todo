@@ -8,6 +8,7 @@ export default function Todos ({todos}) {
             return <TodoItem key={todo.id} todo={todo}/>
         })}
       </div>
+      
     )
   }
 
